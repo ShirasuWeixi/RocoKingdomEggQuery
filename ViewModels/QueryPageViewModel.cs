@@ -16,6 +16,7 @@ namespace RocoKingdomEggQuery.ViewModels
         private CategoryModel? _topResult;
         private bool _isLoading;
         private string _statusMessage = "准备就绪";
+        private FeedbackViewModel _feedbackViewModel = new();
 
         public string SizeInput
         {
@@ -71,6 +72,12 @@ namespace RocoKingdomEggQuery.ViewModels
             set => SetProperty(ref _statusMessage, value);
         }
 
+        public FeedbackViewModel FeedbackViewModel
+        {
+            get => _feedbackViewModel;
+            set => SetProperty(ref _feedbackViewModel, value);
+        }
+
         public RelayCommand QueryCommand { get; }
         public RelayCommand FeedbackCommand { get; }
 
@@ -117,6 +124,7 @@ namespace RocoKingdomEggQuery.ViewModels
                 var allResults = _modelService.CalculatePosteriorProbabilities(_model, size, mass);
                 
                 var filteredResults = allResults.Where(r => r.PosteriorProbability >= ProbabilityThreshold).ToList();
+<<<<<<< Updated upstream
                 
                 foreach (var result in filteredResults)
                 {
@@ -125,6 +133,19 @@ namespace RocoKingdomEggQuery.ViewModels
 
                 TopResult = filteredResults.FirstOrDefault();
                 
+=======
+
+            foreach (var result in filteredResults)
+            {
+                Results.Add(result);
+            }
+
+            TopResult = filteredResults.FirstOrDefault();
+            
+            // 更新反馈视图中的精灵名称列表
+            FeedbackViewModel.SetSpriteNamesFromResults(filteredResults.Select(r => r.Name));
+
+>>>>>>> Stashed changes
                 if (TopResult != null)
                 {
                     TopResult.IsTopResult = true;
@@ -146,7 +167,7 @@ namespace RocoKingdomEggQuery.ViewModels
 
         private void OnFeedback()
         {
-            StatusMessage = "感谢您的反馈！";
+            FeedbackViewModel.Show(SizeInput, MassInput);
         }
     }
 }
