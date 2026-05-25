@@ -1,0 +1,140 @@
+<UserControl x:Class="RocoKingdomEggQuery.Views.FeedbackView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             d:DesignHeight="400" d:DesignWidth="500">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Resources/Styles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <Border Background="White"
+            BorderBrush="{DynamicResource BorderBrush}"
+            BorderThickness="1"
+            CornerRadius="20"
+            Padding="30"
+            Effect="{DynamicResource OutputBoxEffect}">
+        <StackPanel>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,25">
+                <TextBlock Text="💬" FontSize="28" Margin="0,0,12,0"/>
+                <TextBlock Text="结果反馈"
+                           FontSize="18"
+                           FontWeight="Bold"
+                           Foreground="{DynamicResource PrimaryTextBrush}"
+                           VerticalAlignment="Center"/>
+            </StackPanel>
+
+            <Grid Margin="0,0,0,20">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="📐 尺寸数据"
+                           Style="{DynamicResource LabelTextStyle}" Margin="0,0,0,8"/>
+                <TextBlock Grid.Row="0" Grid.Column="1" Text="⚖️ 质量数据"
+                           Style="{DynamicResource LabelTextStyle}" Margin="0,0,0,8"/>
+
+                <Border Grid.Row="1" Grid.Column="0"
+                        Background="#F8FAFF"
+                        BorderBrush="{DynamicResource BorderBrush}"
+                        BorderThickness="2"
+                        CornerRadius="10"
+                        Padding="14,12"
+                        Margin="0,0,10,15">
+                    <TextBlock Text="{Binding SizeData}"
+                               FontSize="14"
+                               Foreground="{DynamicResource PrimaryTextBrush}"
+                               VerticalAlignment="Center"/>
+                </Border>
+
+                <Border Grid.Row="1" Grid.Column="1"
+                        Background="#F8FAFF"
+                        BorderBrush="{DynamicResource BorderBrush}"
+                        BorderThickness="2"
+                        CornerRadius="10"
+                        Padding="14,12"
+                        Margin="0,0,0,15">
+                    <TextBlock Text="{Binding MassData}"
+                               FontSize="14"
+                               Foreground="{DynamicResource PrimaryTextBrush}"
+                               VerticalAlignment="Center"/>
+                </Border>
+
+                <TextBlock Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"
+                           Text="✨ 精灵名称"
+                           Style="{DynamicResource LabelTextStyle}"
+                           Margin="0,0,0,8"/>
+
+                <Grid Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBox Grid.Row="0"
+                             Style="{DynamicResource FormTextBoxStyle}"
+                             Text="{Binding SpriteName, UpdateSourceTrigger=PropertyChanged}"
+                             Padding="14,12"
+                             GotFocus="TextBox_GotFocus"/>
+
+                    <Border Grid.Row="1"
+                            Background="White"
+                            BorderBrush="{DynamicResource BorderBrush}"
+                            BorderThickness="1"
+                            CornerRadius="10"
+                            Margin="0,5,0,0"
+                            Visibility="{Binding ShowSuggestions, Converter={StaticResource InverseBoolConverter}}">
+                        <StackPanel>
+                            <ItemsControl ItemsSource="{Binding Suggestions}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Button Content="{Binding}"
+                                                Style="{DynamicResource SecondaryButtonStyle}"
+                                                Command="{Binding DataContext.SelectSuggestionCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                CommandParameter="{Binding}"
+                                                Margin="5"
+                                                Padding="15,10"/>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </Grid>
+
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Center"
+                        Margin="0,20,0,0">
+                <Button Command="{Binding CancelCommand}"
+                        Width="120"
+                        Margin="0,0,12,0">
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource SecondaryButtonStyle}">
+                            <Setter Property="Content" Value="取消"/>
+                        </Style>
+                    </Button.Style>
+                </Button>
+                <Button Command="{Binding SubmitCommand}"
+                        Width="120">
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource PrimaryButtonStyle}">
+                            <Setter Property="Content" Value="提交"/>
+                        </Style>
+                    </Button.Style>
+                </Button>
+            </StackPanel>
+        </StackPanel>
+    </Border>
+</UserControl>
