@@ -124,28 +124,17 @@ namespace RocoKingdomEggQuery.ViewModels
                 var allResults = _modelService.CalculatePosteriorProbabilities(_model, size, mass);
                 
                 var filteredResults = allResults.Where(r => r.PosteriorProbability >= ProbabilityThreshold).ToList();
-<<<<<<< Updated upstream
-                
+
                 foreach (var result in filteredResults)
                 {
                     Results.Add(result);
                 }
 
                 TopResult = filteredResults.FirstOrDefault();
-                
-=======
 
-            foreach (var result in filteredResults)
-            {
-                Results.Add(result);
-            }
+                // 更新反馈视图中的精灵名称列表
+                FeedbackViewModel.SetSpriteNamesFromResults(filteredResults.Select(r => r.Name));
 
-            TopResult = filteredResults.FirstOrDefault();
-            
-            // 更新反馈视图中的精灵名称列表
-            FeedbackViewModel.SetSpriteNamesFromResults(filteredResults.Select(r => r.Name));
-
->>>>>>> Stashed changes
                 if (TopResult != null)
                 {
                     TopResult.IsTopResult = true;
