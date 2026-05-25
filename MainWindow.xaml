@@ -1,0 +1,165 @@
+<Window x:Class="RocoKingdomEggQuery.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:RocoKingdomEggQuery"
+        xmlns:vm="clr-namespace:RocoKingdomEggQuery.ViewModels"
+        xmlns:views="clr-namespace:RocoKingdomEggQuery.Views"
+        mc:Ignorable="d"
+        Title="洛克王国精灵蛋查询" Height="700" Width="1100"
+        WindowStartupLocation="CenterScreen"
+        Background="{DynamicResource WindowBackgroundBrush}"
+        Icon="/Resources/ICON.ico">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Resources/Styles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="240"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Border Grid.Column="0" Background="{DynamicResource SidebarGradientBrush}">
+            <StackPanel Margin="0">
+                <Border Padding="25,30,25,20">
+                    <StackPanel>
+                        <TextBlock Text="🥚" FontSize="40" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+                        <TextBlock Text="洛克王国"
+                                   FontSize="20"
+                                   FontWeight="Bold"
+                                   Foreground="White"
+                                   HorizontalAlignment="Center"/>
+                        <TextBlock Text="精灵蛋查询系统"
+                                   FontSize="13"
+                                   Foreground="#A0AEC0"
+                                   HorizontalAlignment="Center"
+                                   Margin="0,3,0,0"/>
+                    </StackPanel>
+                </Border>
+
+                <Border Height="1" Background="#40566E" Margin="20,0"/>
+
+                <StackPanel Margin="10,20,10,10">
+                    <TextBlock Text="导航菜单"
+                               FontSize="12"
+                               FontWeight="SemiBold"
+                               Foreground="#718096"
+                               Margin="10,0,0,10"/>
+
+                    <Button Content="  🔍  精灵查询"
+                            Style="{DynamicResource NavButtonStyle}"
+                            Command="{Binding NavigateToQueryCommand}"
+                            Tag="Query"/>
+
+                    <Button Content="  ⚙️  系统设置"
+                            Style="{DynamicResource NavButtonStyle}"
+                            Command="{Binding NavigateToSettingsCommand}"
+                            Tag="Settings"/>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <Border Grid.Column="1" Padding="30">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <Border Grid.Row="0" Margin="0,0,0,25">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="{Binding CurrentView}"
+                                       Style="{DynamicResource HeaderTextStyle}"
+                                       Margin="0,0,0,5"/>
+                            <TextBlock Text="探索洛克王国的神秘精灵蛋"
+                                       FontSize="14"
+                                       Foreground="{DynamicResource SecondaryTextBrush}"/>
+                        </StackPanel>
+
+                        <Border Grid.Column="1" 
+                                Background="White" 
+                                CornerRadius="12" 
+                                Padding="12,8"
+                                BorderBrush="{StaticResource BorderBrush}"
+                                BorderThickness="1">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="✨" FontSize="18" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                <StackPanel>
+                                    <TextBlock Text="查询助手" 
+                                               FontSize="12" 
+                                               FontWeight="SemiBold"
+                                               Foreground="{StaticResource PrimaryTextBrush}"/>
+                                    <TextBlock Text="准备就绪" 
+                                               FontSize="11"
+                                               Foreground="{StaticResource SecondaryTextBrush}"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+                </Border>
+
+                <ContentControl Grid.Row="1"
+                                Content="{Binding CurrentPage}">
+                    <ContentControl.Style>
+                        <Style TargetType="ContentControl">
+                            <Style.Triggers>
+                                <Trigger Property="Content" Value="Query">
+                                    <Setter Property="ContentTemplate">
+                                        <Setter.Value>
+                                            <DataTemplate>
+                                                <views:QueryPage>
+                                                    <views:QueryPage.DataContext>
+                                                        <vm:QueryPageViewModel/>
+                                                    </views:QueryPage.DataContext>
+                                                </views:QueryPage>
+                                            </DataTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Trigger>
+                                <Trigger Property="Content" Value="Settings">
+                                    <Setter Property="ContentTemplate">
+                                        <Setter.Value>
+                                            <DataTemplate>
+                                                <Border Background="White"
+                                                        BorderBrush="{DynamicResource BorderBrush}"
+                                                        BorderThickness="1"
+                                                        CornerRadius="20"
+                                                        Padding="40">
+                                                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                        <TextBlock Text="⚙️" FontSize="60" HorizontalAlignment="Center" Margin="0,0,0,20"/>
+                                                        <TextBlock Text="设置功能开发中"
+                                                                   FontSize="20"
+                                                                   FontWeight="Bold"
+                                                                   Foreground="{DynamicResource PrimaryTextBrush}"
+                                                                   HorizontalAlignment="Center"
+                                                                   Margin="0,0,0,8"/>
+                                                        <TextBlock Text="敬请期待更多精彩功能！"
+                                                                   FontSize="14"
+                                                                   Foreground="{DynamicResource SecondaryTextBrush}"
+                                                                   HorizontalAlignment="Center"/>
+                                                    </StackPanel>
+                                                </Border>
+                                            </DataTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ContentControl.Style>
+                </ContentControl>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

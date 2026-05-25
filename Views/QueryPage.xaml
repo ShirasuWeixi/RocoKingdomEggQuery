@@ -1,0 +1,258 @@
+<UserControl x:Class="RocoKingdomEggQuery.Views.QueryPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:vm="clr-namespace:RocoKingdomEggQuery.ViewModels"
+             mc:Ignorable="d"
+             d:DesignHeight="800" d:DesignWidth="900">
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Resources/Styles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <UserControl.DataContext>
+        <vm:QueryPageViewModel/>
+    </UserControl.DataContext>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto"
+                  HorizontalScrollBarVisibility="Disabled">
+        <StackPanel>
+            <Border Background="White"
+                    BorderBrush="{DynamicResource BorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="20"
+                    Padding="35"
+                    Margin="0,0,0,25">
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,25">
+                        <TextBlock Text="🐣" FontSize="28" Margin="0,0,12,0"/>
+                        <TextBlock Text="开始你的精灵蛋查询之旅"
+                                   FontSize="18"
+                                   FontWeight="Bold"
+                                   Foreground="{DynamicResource PrimaryTextBrush}"
+                                   VerticalAlignment="Center"/>
+                    </StackPanel>
+
+                    <Grid Margin="0,0,0,25">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="20"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0">
+                            <Border Background="#F8FAFF" 
+                                    CornerRadius="10" 
+                                    Padding="15,12"
+                                    Margin="0,0,0,10">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="📐" FontSize="18" Margin="0,0,10,0"/>
+                                    <StackPanel>
+                                        <TextBlock Text="尺寸 (Size)"
+                                                   Style="{DynamicResource LabelTextStyle}"
+                                                   Margin="0,0,0,3"/>
+                                        <TextBlock Text="输入精灵的尺寸数值"
+                                                   FontSize="12"
+                                                   Foreground="{DynamicResource SecondaryTextBrush}"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
+                            <TextBox Style="{DynamicResource FormTextBoxStyle}"
+                                     Text="{Binding SizeInput, UpdateSourceTrigger=PropertyChanged}"
+                                     IsEnabled="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}">
+                            </TextBox>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="2">
+                            <Border Background="#F8FAFF" 
+                                    CornerRadius="10" 
+                                    Padding="15,12"
+                                    Margin="0,0,0,10">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="⚖️" FontSize="18" Margin="0,0,10,0"/>
+                                    <StackPanel>
+                                        <TextBlock Text="质量 (Mass)"
+                                                   Style="{DynamicResource LabelTextStyle}"
+                                                   Margin="0,0,0,3"/>
+                                        <TextBlock Text="输入精灵的质量数值"
+                                                   FontSize="12"
+                                                   Foreground="{DynamicResource SecondaryTextBrush}"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
+                            <TextBox Style="{DynamicResource FormTextBoxStyle}"
+                                     Text="{Binding MassInput, UpdateSourceTrigger=PropertyChanged}"
+                                     IsEnabled="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}">
+                            </TextBox>
+                        </StackPanel>
+                    </Grid>
+
+                    <Border Background="#F8FAFF" 
+                            CornerRadius="10" 
+                            Padding="15,12"
+                            Margin="0,0,0,10">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="🎯" FontSize="18" Margin="0,0,10,0"/>
+                            <StackPanel>
+                                <TextBlock Text="概率阈值 (Probability Threshold)"
+                                           Style="{DynamicResource LabelTextStyle}"
+                                           Margin="0,0,0,3"/>
+                                <TextBlock Text="设置显示结果的最小概率"
+                                           FontSize="12"
+                                           Foreground="{DynamicResource SecondaryTextBrush}"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <StackPanel Margin="0,0,0,10">
+                        <Slider Minimum="0" Maximum="0.5" 
+                                Value="{Binding ProbabilityThreshold}"
+                                TickFrequency="0.01"
+                                IsSnapToTickEnabled="True"
+                                Style="{DynamicResource SliderStyle}"
+                                IsEnabled="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}"/>
+                        <TextBlock Text="{Binding ProbabilityThreshold, StringFormat='当前阈值: {0:P2}'}"
+                                   FontSize="12"
+                                   Foreground="{DynamicResource SecondaryTextBrush}"
+                                   HorizontalAlignment="Right"/>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal"
+                                HorizontalAlignment="Center"
+                                Margin="0,15,0,0">
+                        <Button Command="{Binding QueryCommand}"
+                                Width="140"
+                                Margin="0,0,12,0">
+                            <Button.Style>
+                                <Style TargetType="Button" BasedOn="{StaticResource PrimaryButtonStyle}">
+                                    <Setter Property="Content" Value="🔍 开始查询"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsLoading}" Value="True">
+                                            <Setter Property="Content" Value="⏳ 查询中..."/>
+                                            <Setter Property="IsEnabled" Value="False"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+
+                        <Button Content="💬 反馈问题"
+                                Style="{DynamicResource SecondaryButtonStyle}"
+                                Command="{Binding FeedbackCommand}"
+                                Width="140"/>
+                    </StackPanel>
+
+                    <TextBlock Text="{Binding StatusMessage}"
+                               Style="{DynamicResource StatusMessageStyle}"
+                               Margin="0,20,0,0"/>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{DynamicResource OutputBoxStyle}" Padding="25">
+                <Grid>
+                    <ItemsControl x:Name="ResultsItemsControl"
+                                  ItemsSource="{Binding Results}"
+                                  Visibility="{Binding Results.Count, Converter={StaticResource CountToVisibilityConverter}, ConverterParameter=Inverted}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <ContentControl>
+                                    <ContentControl.Style>
+                                        <Style TargetType="ContentControl">
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="ContentControl">
+                                                        <Grid>
+                                                            <Border x:Name="CardBorder">
+                                                                <Border.Style>
+                                                                    <MultiBinding Converter="{StaticResource IsTopResultToStyleConverter}">
+                                                                        <Binding/>
+                                                                        <Binding Source="{StaticResource PetCardBaseStyle}"/>
+                                                                        <Binding Source="{StaticResource PetCardTopResultStyle}"/>
+                                                                    </MultiBinding>
+                                                                </Border.Style>
+                                                                <Grid>
+                                                                    <Grid.RowDefinitions>
+                                                                        <RowDefinition Height="Auto"/>
+                                                                        <RowDefinition Height="*"/>
+                                                                        <RowDefinition Height="Auto"/>
+                                                                    </Grid.RowDefinitions>
+                                                                    
+                                                                    <Grid Grid.Row="0" Margin="15,15,15,5">
+                                                                        <TextBlock x:Name="TitleText" Text="{Binding Name}">
+                                                                            <TextBlock.Style>
+                                                                                <MultiBinding Converter="{StaticResource IsTopResultToStyleConverter}">
+                                                                                    <Binding/>
+                                                                                    <Binding Source="{StaticResource CardTitleTextStyle}"/>
+                                                                                    <Binding Source="{StaticResource TopResultTitleTextStyle}"/>
+                                                                                </MultiBinding>
+                                                                            </TextBlock.Style>
+                                                                        </TextBlock>
+                                                                    </Grid>
+                                                                    
+                                                                    <Border Grid.Row="1" Style="{StaticResource ImagePlaceholderStyle}" Margin="0,5">
+                                                                        <TextBlock Text="🐾"
+                                                                                   FontSize="50"
+                                                                                   HorizontalAlignment="Center"
+                                                                                   VerticalAlignment="Center"
+                                                                                   Foreground="#B0B8D0"/>
+                                                                    </Border>
+                                                                    
+                                                                    <StackPanel Grid.Row="2" Margin="15,0,15,18">
+                                                                        <TextBlock Text="{Binding PosteriorProbability, StringFormat='概率: {0:P4}'}"
+                                                                                   Style="{StaticResource CardProbabilityTextStyle}"/>
+                                                                        <TextBlock Text="{Binding SampleCount, StringFormat='样本数: {0}'}"
+                                                                                   Style="{StaticResource CardSampleCountTextStyle}"
+                                                                                   Margin="0,5,0,0"/>
+                                                                    </StackPanel>
+                                                                </Grid>
+                                                            </Border>
+                                                            
+                                                            <TextBlock x:Name="CrownIcon"
+                                                                       Style="{StaticResource CrownIconStyle}"
+                                                                       Visibility="Collapsed"/>
+                                                        </Grid>
+                                                        
+                                                        <ControlTemplate.Triggers>
+                                                            <DataTrigger Binding="{Binding IsTopResult}" Value="True">
+                                                                <Setter TargetName="CrownIcon" Property="Visibility" Value="Visible"/>
+                                                            </DataTrigger>
+                                                        </ControlTemplate.Triggers>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </ContentControl.Style>
+                                </ContentControl>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    
+                    <StackPanel Visibility="{Binding Results.Count, Converter={StaticResource CountToVisibilityConverter}}"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center">
+                        <TextBlock Text="🥚" FontSize="60" HorizontalAlignment="Center" Margin="0,0,0,20"/>
+                        <TextBlock Text="暂无查询结果"
+                                   FontSize="16"
+                                   FontWeight="SemiBold"
+                                   Foreground="{DynamicResource PrimaryTextBrush}"
+                                   HorizontalAlignment="Center"
+                                   Margin="0,0,0,8"/>
+                        <TextBlock Text="请输入参数后点击开始查询"
+                                   Style="{DynamicResource EmptyStateStyle}"
+                                   Padding="0"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

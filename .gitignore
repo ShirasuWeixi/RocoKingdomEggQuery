@@ -1,0 +1,45 @@
+# Compiled output
+bin/
+obj/
+*.dll
+*.exe
+*.pdb
+*.suo
+
+# Visual Studio
+*.user
+*.userosscache
+*.sln.docstates
+.vscode/
+.vs/
+
+# NuGet
+packages/
+*.nupkg
+project.assets.json
+project.nuget.cache
+*.csproj.nuget.*
+
+# Build outputs
+*.deps.json
+*.runtimeconfig.json
+*.designer.deps.json
+*.designer.runtimeconfig.json
+apphost.exe
+
+# Generated files
+*.g.cs
+*.g.i.cs
+*.baml
+*.resx
+GeneratedInternalTypeHelper.*
+*.AssemblyInfo.cs
+*.GlobalUsings.g.cs
+*.GeneratedMSBuildEditorConfig.editorconfig
+
+# Publish
+PublishProfiles/*.pubxml.user
+*.nuspec
+
+# Logs
+*.log
