@@ -8,6 +8,10 @@ namespace RocoKingdomEggQuery.Services
     {
         private const string ModelFileName = "bayesian_model.json";
         private BayesianModel? _cachedModel;
+        private readonly List<string> _filteredSpriteNames = new();
+        private readonly List<string> _filterReasons = new();
+
+        public event EventHandler<string>? FilteredSpriteLogged;
 
         public async Task<BayesianModel> LoadModelAsync()
         {
@@ -44,13 +48,30 @@ namespace RocoKingdomEggQuery.Services
 
         public List<CategoryModel> CalculatePosteriorProbabilities(BayesianModel model, double size, double mass)
         {
+            return CalculatePosteriorProbabilities(model, size, size, mass);
+        }
+
+        public List<CategoryModel> CalculatePosteriorProbabilities(BayesianModel model, double minQuerySize, double maxQuerySize, double mass)
+        {
+            _filteredSpriteNames.Clear();
+            _filterReasons.Clear();
+
             var results = new List<CategoryModel>();
             double totalProbability = 0;
 
             foreach (var category in model.CategoryModels.Values)
             {
-                double pXGivenK = CalculatePXGivenK(category, size);
-                double normalPdf = CalculateNormalPdf(mass, category.Ak * size + category.Bk, category.SigmaK);
+                if (!HasSizeRangeOverlap(minQuerySize, maxQuerySize, category.MinSize, category.MaxSize))
+                {
+                    string reason = $"尺寸范围无交集: 查询范围[{minQuerySize:F2}, {maxQuerySize:F2}] vs 精灵范围[{category.MinSize:F2}, {category.MaxSize:F2}]";
+                    _filteredSpriteNames.Add(category.Name);
+                    _filterReasons.Add(reason);
+                    OnFilteredSpriteLogged($"[过滤] {category.Name}: {reason}");
+                    continue;
+                }
+
+                double pXGivenK = CalculatePXGivenK(category, minQuerySize, maxQuerySize);
+                double normalPdf = CalculateNormalPdf(mass, category.Ak * ((minQuerySize + maxQuerySize) / 2) + category.Bk, category.SigmaK);
                 double jointProbability = category.PriorProbability * normalPdf * pXGivenK;
 
                 var resultCategory = new CategoryModel
@@ -78,18 +99,31 @@ namespace RocoKingdomEggQuery.Services
                 }
             }
 
+            OnFilteredSpriteLogged($"[统计] 总计过滤 {FilteredSpriteCount} 个精灵，保留 {results.Count} 个精灵进行概率计算");
             return results.OrderByDescending(c => c.PosteriorProbability).ToList();
         }
 
-        private double CalculatePXGivenK(CategoryModel category, double size)
+        public int FilteredSpriteCount => _filteredSpriteNames.Count;
+
+        public IReadOnlyList<string> GetFilteredSpriteNames() => _filteredSpriteNames.AsReadOnly();
+
+        public IReadOnlyList<string> GetFilterReasons() => _filterReasons.AsReadOnly();
+
+        private bool HasSizeRangeOverlap(double minQuerySize, double maxQuerySize, double minSpriteSize, double maxSpriteSize)
         {
+            return !(minQuerySize > maxSpriteSize || maxQuerySize < minSpriteSize);
+        }
+
+        private double CalculatePXGivenK(CategoryModel category, double minQuerySize, double maxQuerySize)
+        {
+            double queryMeanSize = (minQuerySize + maxQuerySize) / 2;
             double meanSize = (category.MinSize + category.MaxSize) / 2;
             double stdSize = (category.MaxSize - category.MinSize) / 4;
 
             if (stdSize <= 0)
                 stdSize = 0.1;
 
-            return CalculateNormalPdf(size, meanSize, stdSize);
+            return CalculateNormalPdf(queryMeanSize, meanSize, stdSize);
         }
 
         private double CalculateNormalPdf(double x, double mean, double stdDev)
@@ -99,6 +133,11 @@ namespace RocoKingdomEggQuery.Services
 
             double exponent = -0.5 * Math.Pow((x - mean) / stdDev, 2);
             return Math.Exp(exponent) / (stdDev * Math.Sqrt(2 * Math.PI));
+        }
+
+        private void OnFilteredSpriteLogged(string message)
+        {
+            FilteredSpriteLogged?.Invoke(this, message);
         }
     }
 }
