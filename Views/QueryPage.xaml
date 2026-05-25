@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:vm="clr-namespace:RocoKingdomEggQuery.ViewModels"
+             xmlns:views="clr-namespace:RocoKingdomEggQuery.Views"
              mc:Ignorable="d"
              d:DesignHeight="800" d:DesignWidth="900">
 
@@ -19,15 +20,16 @@
         <vm:QueryPageViewModel/>
     </UserControl.DataContext>
 
-    <ScrollViewer VerticalScrollBarVisibility="Auto"
-                  HorizontalScrollBarVisibility="Disabled">
-        <StackPanel>
-            <Border Background="White"
-                    BorderBrush="{DynamicResource BorderBrush}"
-                    BorderThickness="1"
-                    CornerRadius="20"
-                    Padding="35"
-                    Margin="0,0,0,25">
+    <Grid>
+        <ScrollViewer VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Disabled">
+            <StackPanel>
+                <Border Background="White"
+                        BorderBrush="{DynamicResource BorderBrush}"
+                        BorderThickness="1"
+                        CornerRadius="20"
+                        Padding="35"
+                        Margin="0,0,0,25">
                 <StackPanel>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,25">
                         <TextBlock Text="🐣" FontSize="28" Margin="0,0,12,0"/>
@@ -141,10 +143,10 @@
                             </Button.Style>
                         </Button>
 
-                        <Button Content="💬 反馈问题"
-                                Style="{DynamicResource SecondaryButtonStyle}"
-                                Command="{Binding FeedbackCommand}"
-                                Width="140"/>
+                        <Button Content="💬 结果反馈"
+                        Style="{DynamicResource SecondaryButtonStyle}"
+                        Command="{Binding FeedbackCommand}"
+                        Width="140"/>
                     </StackPanel>
 
                     <TextBlock Text="{Binding StatusMessage}"
@@ -253,6 +255,14 @@
                     </StackPanel>
                 </Grid>
             </Border>
-        </StackPanel>
-    </ScrollViewer>
+            </StackPanel>
+        </ScrollViewer>
+
+        <Grid Background="#80000000"
+              Visibility="{Binding FeedbackViewModel.IsVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                <views:FeedbackView DataContext="{Binding FeedbackViewModel}"/>
+            </Grid>
+        </Grid>
+    </Grid>
 </UserControl>
